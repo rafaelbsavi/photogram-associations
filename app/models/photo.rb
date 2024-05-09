@@ -25,7 +25,7 @@ class Photo < ApplicationRecord
 
   # Photo#comments: returns rows from the comments table associated to this photo by the photo_id column
 
-  has_many(:comments, class_name: "Like", foreign_key: "photo_id")
+  has_many(:comments, class_name: "Comment", foreign_key: "photo_id")
 
   # Photo#likes: returns rows from the likes table associated to this photo by the photo_id column
 
@@ -37,6 +37,33 @@ class Photo < ApplicationRecord
 
   has_many(:fans, through: "likes", source: "fan")
   
+
+  def poster
+    my_owner_id = self.owner_id
+
+    matching_users = User.where({ :id => my_owner_id })
+
+    the_user = matching_users.at(0)
+
+    return the_user
+  end
+
+  def comments
+    my_id = self.id
+
+    matching_comments = Comment.where({ :photo_id => self.id })
+
+    return matching_comments
+  end
+
+  def likes
+    my_id = self.id
+
+    matching_likes = Like.where({ :photo_id => self.id })
+
+    return matching_likes
+  end
+
   def fans
     my_likes = self.likes
     
